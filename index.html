@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>ESP32 Weather Station</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="/src/style.css" rel="stylesheet">
+    <script type="module" src="/src/app.js"></script>
+</head>
+
+<body class="bg-linear-to-b from-cyan-100 to-cyan-300 h-screen">
+    <div class="flex justify-center">
+        <main class="m-15 bg-slate-200 p-10 rounded-2xl w-1/3 shadow-2xl h-fit">
+            <h1 class="font-bold text-2xl">ESP32 Weather Station Data</h1>
+            <h2 class="font-bold text-xl">Last time received</h2>
+            <p>The last packet was received on <span class="font-bold" id="weather-time">N/A</span></p>
+            <h2 class="font-bold text-xl">Last pressure received and corrected</h2>
+            <canvas id="weather-pressure"></canvas>
+            <h2 class="font-bold text-xl">Last temperature received and corrected</h2>
+            <canvas id="weather-temperature"></canvas>
+        </main>
+        <aside class="m-15 p-10 bg-gray-100 rounded-2xl w-1/3 shadow-2xl h-fit">
+            <h1 class="font-bold text-2xl">Notes</h1>
+            <h2 class="font-bold text-xl">How does this work?</h2>
+            <p>Your browser subscribes and parses MQTT JSON data from the house's weather station.</p>
+            <h2 class="font-bold text-xl">Time readout</h2>
+            <p>This tracks GPS time, it should be accurate even if the Internet goes out.</p>
+            <h2 class="font-bold text-xl">Readout intervals</h2>
+            <p>The readout depends on the configuration of the ESP32 weather station, readouts are usually every 15 seconds.</p>
+        </aside>
+    </div>
+</body>
+
+</html>
