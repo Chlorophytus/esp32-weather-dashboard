@@ -5,17 +5,17 @@ import mqtt from 'mqtt'
 const client = mqtt.connect("ws://192.168.88.25:8080");
 
 // Change this if your pressure reading is off
-const pressure_trim = 23;
+const pressureTrim = 22.5;
 
 // Change this if your temperature reading is off
-const temperature_trim = 0;
+const temperatureTrim = 0;
 
 const ctxPressure = document.getElementById("weather-pressure");
 const ctxTemperature = document.getElementById("weather-temperature");
 var pressure = [];
 var temperature = [];
 var labels = [];
-const weatherHistory = 25;
+const weatherHistory = 50;
 
 const chartPressure = new Chart(ctxPressure, {
     type: 'line', data: {
@@ -40,7 +40,7 @@ const chartTemperature = new Chart(ctxTemperature, {
     type: 'line', data: {
         labels: labels,
         datasets: [{
-            label: 'Room temperature (°C)',
+            label: 'Sensor temperature (°C)',
             data: temperature,
             fill: false,
             backgroundColor: 'orangered',
@@ -62,8 +62,28 @@ client.on("message", (topic, message) => {
     if (topic === 'weather/status') {
         const json = JSON.parse(message);
         const date = json.unix_time * 1000;
+        const pressureValue = Math.round((json.data.pressure / 100) + pressureTrim);
 
-        document.getElementById("weather-time").innerText = new Date(date);
+        if (pressureValue >= 1030) {
+            document.getElementById("weather-pressure-trend").innerText = "quite calm";
+        } else if (pressureValue <= 1000) {
+            if(pressureValue <= 920) {
+                document.getElementById("weather-pressure-trend").innerText = "quite stormy";
+            } else if(pressureValue <= 980) {
+                document.getElementById("weather-pressure-trend").innerText = "stormy";
+            } else {
+                document.getElementById("weather-pressure-trend").innerText = "rainy";
+            }
+        } else {
+            document.getElementById("weather-pressure-trend").innerText = "calm";
+        }
+
+        const temperatureValue_C = Math.round(((json.data.temperature / 100) + temperatureTrim) * 10) / 10;
+        const temperatureValue_F = Math.round((((json.data.temperature / 100) + temperatureTrim) * (9 / 5) + 32) * 2) / 2;
+
+        document.getElementById("weather-time-text").innerText = new Date(date);
+        document.getElementById("weather-pressure-text").innerText = `${pressureValue} millibars`;
+        document.getElementById("weather-temperature-text").innerText = `${temperatureValue_C}°C/${temperatureValue_F}°F`;
 
         if (labels.length > weatherHistory) {
             labels.shift();
@@ -72,11 +92,11 @@ client.on("message", (topic, message) => {
         if (pressure.length > weatherHistory) {
             pressure.shift()
         }
-        pressure.push(Math.round((json.data.pressure / 100) + pressure_trim));
+        pressure.push(pressureValue);
         if (temperature.length > weatherHistory) {
             temperature.shift()
         }
-        temperature.push(Math.round(((json.data.temperature / 100) + temperature_trim) * 10) / 10);
+        temperature.push(temperatureValue_C);
 
         chartPressure.data.labels = labels;
         chartPressure.data.datasets[0].data = pressure;
