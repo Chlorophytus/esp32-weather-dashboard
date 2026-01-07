@@ -115,9 +115,9 @@ client.on("message", (topic, message) => {
             var sum = derivatives.reduce((previous, current) => { return previous + current }, 0);
 
             document.getElementById("weather-pressure-dx").innerText = `${roundPressure(sum * 10) / 10} mbar/hour`;
-            if(sum > 0.25) {
+            if(sum > 0.1) {
                 document.getElementById("weather-pressure-dx-trend").innerText = "calm";
-            } else if(sum < -0.25) {
+            } else if(sum < -0.1) {
                 document.getElementById("weather-pressure-dx-trend").innerText = "stormy"
             } else {
                 document.getElementById("weather-pressure-dx-trend").innerText = "steady";
