@@ -18,15 +18,29 @@
             <h2 class="font-bold text-xl">Last temperature received and corrected</h2>
             <canvas id="weather-temperature"></canvas>
         </main>
-        <aside class="m-15 p-10 bg-gray-100 rounded-2xl w-1/3 shadow-2xl h-fit">
-            <h1 class="font-bold text-2xl">Current Data</h1>
-            <h2 class="font-bold text-xl">Last time received</h2>
-            <p>The last packet was received on <span class="font-bold" id="weather-time-text">N/A</span></p>
-            <h2 class="font-bold text-xl">Atmospheric Pressure</h2>
-            <p>The atmospheric pressure is currently <span class="font-bold" id="weather-pressure-text">N/A</span></p>
-            <p>This means the weather is <span class="font-bold" id="weather-pressure-trend">N/A</span> now (or in the future)</p>
-            <h2 class="font-bold text-xl">Sensor Temperature</h2>
-            <p>The sensor's temperature is currently <span class="font-bold" id="weather-temperature-text">N/A</span></p>
+        <aside class="w-1/3 ">
+            <section class="m-15 p-10 bg-gray-100 rounded-2xl shadow-2xl h-fit">
+                <h1 class="font-bold text-2xl">Current Data</h1>
+                <h2 class="font-bold text-xl">Last time received</h2>
+                <p>The last packet was received on <span class="font-bold" id="weather-time-text">N/A</span></p>
+                <h2 class="font-bold text-xl">Atmospheric Pressure</h2>
+                <p>The atmospheric pressure is currently <span class="font-bold" id="weather-pressure-text">N/A</span>
+                </p>
+                <p>This means the weather is <span class="font-bold" id="weather-pressure-trend">N/A</span> now (or in
+                    the future)</p>
+                <h2 class="font-bold text-xl">Sensor Temperature</h2>
+                <p>The sensor's temperature is currently <span class="font-bold"
+                        id="weather-temperature-text">N/A</span></p>
+            </section>
+            <section class="m-15 p-10 bg-gray-100 rounded-2xl shadow-2xl h-fit">
+                <h1 class="font-bold text-2xl">Rates of Change</h1>
+                <h2 class="font-bold text-xl">Atmospheric Pressure</h2>
+                <p>The average change of the atmospheric pressure is approximately <span class="font-bold"
+                        id="weather-pressure-dx">N/A</span></p>
+                <h2 class="font-bold text-xl">Sensor Temperature</h2>
+                <p>The average change of the sensor's temperature is approximately <span class="font-bold"
+                        id="weather-temperature-dx">N/A</span></p>
+            </section>
         </aside>
     </div>
 </body>

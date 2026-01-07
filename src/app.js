@@ -5,7 +5,7 @@ import mqtt from 'mqtt'
 const client = mqtt.connect("ws://192.168.88.25:8080");
 
 // Change this if your pressure reading is off
-const pressureTrim = 22.5;
+const pressureTrim = 2300;
 
 // Change this if your temperature reading is off
 const temperatureTrim = 0;
@@ -56,20 +56,28 @@ const chartTemperature = new Chart(ctxTemperature, {
     }
 });
 
+function roundPressure(pressure) {
+    return Math.round(pressure / 100);
+}
+function roundTemperature(temperature) {
+    return Math.round(((temperature / 100)) * 10) / 10;
+}
+
 client.subscribe('weather/status');
 
 client.on("message", (topic, message) => {
     if (topic === 'weather/status') {
         const json = JSON.parse(message);
         const date = json.unix_time * 1000;
-        const pressureValue = Math.round((json.data.pressure / 100) + pressureTrim);
+        const pressureValue = roundPressure(json.data.pressure + pressureTrim);
+        const temperatureValue = roundTemperature(json.data.temperature + temperatureTrim);
 
         if (pressureValue >= 1030) {
             document.getElementById("weather-pressure-trend").innerText = "quite calm";
         } else if (pressureValue <= 1000) {
-            if(pressureValue <= 920) {
+            if (pressureValue <= 920) {
                 document.getElementById("weather-pressure-trend").innerText = "quite stormy";
-            } else if(pressureValue <= 980) {
+            } else if (pressureValue <= 980) {
                 document.getElementById("weather-pressure-trend").innerText = "stormy";
             } else {
                 document.getElementById("weather-pressure-trend").innerText = "rainy";
@@ -78,12 +86,9 @@ client.on("message", (topic, message) => {
             document.getElementById("weather-pressure-trend").innerText = "calm";
         }
 
-        const temperatureValue_C = Math.round(((json.data.temperature / 100) + temperatureTrim) * 10) / 10;
-        const temperatureValue_F = Math.round((((json.data.temperature / 100) + temperatureTrim) * (9 / 5) + 32) * 2) / 2;
-
         document.getElementById("weather-time-text").innerText = new Date(date);
         document.getElementById("weather-pressure-text").innerText = `${pressureValue} millibars`;
-        document.getElementById("weather-temperature-text").innerText = `${temperatureValue_C}°C/${temperatureValue_F}°F`;
+        document.getElementById("weather-temperature-text").innerText = `${temperatureValue} °C`;
 
         if (labels.length > weatherHistory) {
             labels.shift();
@@ -96,7 +101,37 @@ client.on("message", (topic, message) => {
         if (temperature.length > weatherHistory) {
             temperature.shift()
         }
-        temperature.push(temperatureValue_C);
+        temperature.push(temperatureValue);
+
+        const pressurePrev = json.previous.pressure;
+        if (pressurePrev.length > 1) {
+            var derivatives = [];
+            for (let index = 1; index < pressurePrev.length; index++) {
+                const y1 = pressurePrev[index - 0];
+                const y0 = pressurePrev[index - 1];
+                derivatives.push((y1 - y0) / 2);
+            }
+
+            var average = derivatives.reduce((previous, current) => { return previous + current }, 0);
+            average /= derivatives.length;
+
+            document.getElementById("weather-pressure-dx").innerText = `${roundPressure(average * 100) / 100} mbar/hour`;
+        }
+
+        const temperaturePrev = json.previous.temperature;
+        if (temperaturePrev.length > 1) {
+            var derivatives = [];
+            for (let index = 1; index < temperaturePrev.length; index++) {
+                const y1 = temperaturePrev[index - 0];
+                const y0 = temperaturePrev[index - 1];
+                derivatives.push((y1 - y0) / 2);
+            }
+
+            var average = derivatives.reduce((previous, current) => { return previous + current }, 0);
+            average /= derivatives.length;
+
+            document.getElementById("weather-temperature-dx").innerText = `${roundTemperature(average * 10) / 10} °C/hour`;
+        }
 
         chartPressure.data.labels = labels;
         chartPressure.data.datasets[0].data = pressure;
