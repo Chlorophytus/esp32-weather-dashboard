@@ -112,10 +112,9 @@ client.on("message", (topic, message) => {
                 derivatives.push((y1 - y0) / 2);
             }
 
-            var average = derivatives.reduce((previous, current) => { return previous + current }, 0);
-            average /= derivatives.length;
+            var sum = derivatives.reduce((previous, current) => { return previous + current }, 0);
 
-            document.getElementById("weather-pressure-dx").innerText = `${roundPressure(average * 100) / 100} mbar/hour`;
+            document.getElementById("weather-pressure-dx").innerText = `${roundPressure(sum * 10) / 10} mbar/hour`;
         }
 
         const temperaturePrev = json.previous.temperature;
@@ -127,10 +126,9 @@ client.on("message", (topic, message) => {
                 derivatives.push((y1 - y0) / 2);
             }
 
-            var average = derivatives.reduce((previous, current) => { return previous + current }, 0);
-            average /= derivatives.length;
+            var sum = derivatives.reduce((previous, current) => { return previous + current }, 0);
 
-            document.getElementById("weather-temperature-dx").innerText = `${roundTemperature(average * 10) / 10} °C/hour`;
+            document.getElementById("weather-temperature-dx").innerText = `${roundTemperature(sum)} °C/hour`;
         }
 
         chartPressure.data.labels = labels;
