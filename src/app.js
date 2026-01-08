@@ -74,7 +74,7 @@ client.on("message", (topic, message) => {
 
         if (pressureValue >= 1030) {
             document.getElementById("weather-pressure-trend").innerText = "quite calm";
-        } else if (pressureValue <= 1000) {
+        } else if (pressureValue <= 1007) {
             if (pressureValue <= 920) {
                 document.getElementById("weather-pressure-trend").innerText = "quite stormy";
             } else if (pressureValue <= 980) {
@@ -104,7 +104,7 @@ client.on("message", (topic, message) => {
         temperature.push(temperatureValue);
 
         const pressurePrev = json.previous.pressure;
-        if (pressurePrev.length == 10) {
+        if (pressurePrev.length === 10) {
             var derivatives = [];
             for (let index = 1; index < pressurePrev.length; index++) {
                 const y1 = pressurePrev[index - 0];
@@ -115,17 +115,17 @@ client.on("message", (topic, message) => {
             var sum = derivatives.reduce((previous, current) => { return previous + current }, 0);
 
             document.getElementById("weather-pressure-dx").innerText = `${roundPressure(sum * 10) / 10} mbar/hour`;
-            if(sum > 0.1) {
-                document.getElementById("weather-pressure-dx-trend").innerText = "calm";
-            } else if(sum < -0.1) {
-                document.getElementById("weather-pressure-dx-trend").innerText = "stormy"
+            if(sum > 0.15) {
+                document.getElementById("weather-pressure-dx-trend").innerText = "calm or clear";
+            } else if(sum < -0.15) {
+                document.getElementById("weather-pressure-dx-trend").innerText = "rainy or stormy"
             } else {
                 document.getElementById("weather-pressure-dx-trend").innerText = "steady";
             }
         }
 
         const temperaturePrev = json.previous.temperature;
-        if (temperaturePrev.length == 10) {
+        if (temperaturePrev.length === 10) {
             var derivatives = [];
             for (let index = 1; index < temperaturePrev.length; index++) {
                 const y1 = temperaturePrev[index - 0];
