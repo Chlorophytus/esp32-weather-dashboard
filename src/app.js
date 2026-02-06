@@ -5,7 +5,7 @@ import mqtt from 'mqtt'
 const client = mqtt.connect("ws://192.168.88.25:8080");
 
 // Change this if your pressure reading is off
-const pressureTrim = 2300;
+const pressureTrim = 2250;
 
 // Change this if your temperature reading is off
 const temperatureTrim = 0;
@@ -75,9 +75,9 @@ client.on("message", (topic, message) => {
         if (pressureValue >= 1030) {
             document.getElementById("weather-pressure-trend").innerText = "quite calm";
         } else if (pressureValue <= 1007) {
-            if (pressureValue <= 920) {
+            if (pressureValue <= 925) {
                 document.getElementById("weather-pressure-trend").innerText = "quite stormy";
-            } else if (pressureValue <= 980) {
+            } else if (pressureValue <= 985) {
                 document.getElementById("weather-pressure-trend").innerText = "stormy";
             } else {
                 document.getElementById("weather-pressure-trend").innerText = "rainy";
@@ -115,10 +115,12 @@ client.on("message", (topic, message) => {
             var sum = derivatives.reduce((previous, current) => { return previous + current }, 0);
 
             document.getElementById("weather-pressure-dx").innerText = `${roundPressure(sum * 10) / 10} mbar/hour`;
-            if(sum > 0.15) {
+            
+            // NOTE: sum of temperature is stil millibars
+            if(sum > 15) {
                 document.getElementById("weather-pressure-dx-trend").innerText = "calm or clear";
-            } else if(sum < -0.15) {
-                document.getElementById("weather-pressure-dx-trend").innerText = "rainy or stormy"
+            } else if(sum < -15) {
+                document.getElementById("weather-pressure-dx-trend").innerText = "rainy or stormy";
             } else {
                 document.getElementById("weather-pressure-dx-trend").innerText = "steady";
             }
