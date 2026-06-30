@@ -2,7 +2,7 @@ import Chart from 'chart.js/auto';
 import 'chartjs-adapter-date-fns';
 
 import mqtt from 'mqtt'
-const client = mqtt.connect("ws://192.168.88.25:8080");
+const client = mqtt.connect("ws://192.168.88.100:8080");
 
 // Change this if your pressure reading is off
 const pressureTrim = 2250;
