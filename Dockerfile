@@ -1,12 +1,11 @@
 FROM node:lts
 
+# Drop privileges
+USER node
 WORKDIR /app
 
 # Copy dependency files first to leverage Docker cache
 COPY --chown=node:node package*.json ./
-
-# Drop privileges
-USER node
 
 # Install
 RUN npm install

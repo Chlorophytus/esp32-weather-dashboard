@@ -6,5 +6,9 @@
 	"workspaceFolder": "/workspace",
 	"build": {
 		"dockerfile": "Dockerfile"
-	}
+	},
+	"forwardPorts": [
+        5173
+    ],
+	"remoteUser": "node"
 }
