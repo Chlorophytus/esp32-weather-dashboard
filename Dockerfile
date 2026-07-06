@@ -1,5 +1,6 @@
 FROM node:lts
 
+USER nobody
 WORKDIR /app
 
 # Copy dependency files first to leverage Docker cache
