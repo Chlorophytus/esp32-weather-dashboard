@@ -63,6 +63,12 @@ function roundTemperature(temperature) {
     return Math.round(((temperature / 100)) * 10) / 10;
 }
 
+// Makes "scalar" use up to "exponent" decimal places.
+function truncateToPow10(scalar, exponent) {
+    const power = Math.pow(10, exponent);
+    return Math.round(scalar * power) / power;
+}
+
 client.subscribe('weather/status');
 
 client.on("message", (topic, message) => {
@@ -109,20 +115,22 @@ client.on("message", (topic, message) => {
             for (let index = 1; index < pressurePrev.length; index++) {
                 const y1 = pressurePrev[index - 0];
                 const y0 = pressurePrev[index - 1];
-                derivatives.push((y1 - y0) / 2);
+
+                derivatives.push(y1 - y0);
             }
 
-            var sum = derivatives.reduce((previous, current) => { return previous + current }, 0);
+            let sum = derivatives.reduce((previous, current) => { return previous + current }, 0) / derivatives.length;
 
-            document.getElementById("weather-pressure-dx").innerText = `${roundPressure(sum * 10) / 10} mbar/hour`;
-            
-            // NOTE: sum of temperature is stil millibars
-            if(sum > 15) {
+            document.getElementById("weather-pressure-dx").innerText = `${truncateToPow10(sum, 1)} mbar/hour`;
+
+            // NOTE: sum of pressure is still a sum of millibars
+            document.getElementById("weather-pressure-dx-trend").innerText = "steady";
+            console.log(sum);
+            if (sum > 3.0) {
                 document.getElementById("weather-pressure-dx-trend").innerText = "calm or clear";
-            } else if(sum < -15) {
+            }
+            if (sum < -3.0) {
                 document.getElementById("weather-pressure-dx-trend").innerText = "rainy or stormy";
-            } else {
-                document.getElementById("weather-pressure-dx-trend").innerText = "steady";
             }
         }
 
@@ -132,12 +140,13 @@ client.on("message", (topic, message) => {
             for (let index = 1; index < temperaturePrev.length; index++) {
                 const y1 = temperaturePrev[index - 0];
                 const y0 = temperaturePrev[index - 1];
-                derivatives.push((y1 - y0) / 2);
+
+                derivatives.push(y1 - y0);
             }
 
-            var sum = derivatives.reduce((previous, current) => { return previous + current }, 0);
+            let sum = derivatives.reduce((previous, current) => { return previous + current }, 0) / derivatives.length;
 
-            document.getElementById("weather-temperature-dx").innerText = `${roundTemperature(sum)} °C/hour`;
+            document.getElementById("weather-temperature-dx").innerText = `${truncateToPow10(sum, 1)} °C/hour`;
         }
 
         chartPressure.data.labels = labels;
